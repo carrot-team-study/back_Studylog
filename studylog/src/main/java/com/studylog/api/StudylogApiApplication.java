@@ -16,6 +16,7 @@ public class StudylogApiApplication {
 	public String studyCheck() {
 		return "STUDYLOG SERVER OK";
 		// CI flow test comment
+		//ci test trigger
 	}
 
 }
