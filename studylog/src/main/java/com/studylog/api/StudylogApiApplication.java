@@ -17,6 +17,7 @@ public class StudylogApiApplication {
 		return "STUDYLOG SERVER OK";
 		// CI flow test comment
 		//ci test trigger
+		//ci final test
 	}
 
 }
