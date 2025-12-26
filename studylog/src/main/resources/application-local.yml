@@ -1,8 +1,10 @@
+server:
+  port: 8081
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/studylog
+    username: studylog
+    password: studylog12349876
     driver-class-name: org.postgresql.Driver
 
   data:
@@ -10,3 +12,4 @@ spring:
       host: localhost
       port: 6379
       password: ${REDIS_PASSWORD}
+
