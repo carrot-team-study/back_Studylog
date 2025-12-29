@@ -1,0 +1,79 @@
+name: Deploy (Manual)
+
+on:
+  # 안전하게: 지금은 수동 실행만 가능 (원하는 사람만 버튼 눌러 배포)
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag (default: commit SHA)"
+        required: false
+        default: ""
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set variables
+        id: vars
+        run: |
+          if [ -z "${{ inputs.image_tag }}" ]; then
+            echo "tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
+          echo "image=ghcr.io/${{ github.repository_owner }}/studylog-api" >> $GITHUB_OUTPUT
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 멀티레포/서브디렉토리 구조라면 working-directory 맞춰줘야 함
+      # (예: 백엔드 도커파일이 studylog/ 아래에 있는 경우)
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./studylog
+          push: true
+          tags: |
+            ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
+            ${{ steps.vars.outputs.image }}:latest
+
+      # EC2에 SSH 접속해서 이미지 pull + 컨테이너 재시작
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.EC2_PORT || 22 }}
+          script: |
+            set -e
+
+            IMAGE="${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}"
+
+            echo "Pull image: $IMAGE"
+            docker pull "$IMAGE"
+
+            # 예시 1) docker run 방식 (컨테이너 이름 studylog-api)
+            docker stop studylog-api || true
+            docker rm studylog-api || true
+
+            docker run -d \
+              --name studylog-api \
+              -p 8081:8080 \
+              --restart unless-stopped \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              "$IMAGE"
+
+            docker image prune -f
