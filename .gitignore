@@ -5,3 +5,7 @@
 
 # macOS
 .DS_Store
+
+# Local-only Spring config
+application-local.yml
+application-local.yaml
