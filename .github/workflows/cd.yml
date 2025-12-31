@@ -38,12 +38,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 멀티레포/서브디렉토리 구조라면 working-directory 맞춰줘야 함
-      # (예: 백엔드 도커파일이 studylog/ 아래에 있는 경우)
       - name: Build & Push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./studylog
+          context: .
           push: true
           tags: |
             ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}

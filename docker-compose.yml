@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - .env
+      - env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -22,7 +22,7 @@ services:
     ports:
       - "6379:6379"
     env_file:
-      - .env
+      - env
 
 volumes:
   postgres_data:
