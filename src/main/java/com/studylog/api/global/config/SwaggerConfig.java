@@ -1,4 +1,4 @@
-package com.studylog.api.config;
+package com.studylog.api.global.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
