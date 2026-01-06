@@ -11,7 +11,7 @@ application-local.yml
 application-local.yaml
 
 # Environment variables (contains secrets)
-.env
+env
 env
 HELP.md
 .gradle
