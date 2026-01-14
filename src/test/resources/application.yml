@@ -10,7 +10,7 @@ spring:
       host: localhost
       port: 6379
 
-  jwt:
+jwt:
     secret: test-secret-key-at-least-256-bits-long-for-hs256-algorithm-security-studylog-project-test
     access-token-expiration: 3600000
     refresh-token-expiration: 604800000
