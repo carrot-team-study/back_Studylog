@@ -101,6 +101,8 @@ public enum ErrorCode {
     CANNOT_KICK_TARGET(HttpStatus.CONFLICT, "GROUP_008", "강퇴할 수 없는 대상입니다."),
     INVALID_GROUP_SETTING(HttpStatus.BAD_REQUEST, "GROUP_009", "그룹 설정 값이 올바르지 않습니다."),
     INVITE_LINK_EXPIRED(HttpStatus.CONFLICT, "GROUP_010", "초대 링크가 만료되었습니다."),
+    GROUP_NAME_DUPLICATED(HttpStatus.CONFLICT,"GROUP_011","중복돤 그룹명입니다."),
+    GROUP_PASSWORD_MISMATCH(HttpStatus.CONFLICT,"GROUP_012","비말번호와 비밀번호확인이 일치하지 않습니다."),
 
     // LIKE / RANK
     LIKE_ALREADY_SENT(HttpStatus.CONFLICT, "LIKE_001", "이미 좋아요를 보냈습니다."),
