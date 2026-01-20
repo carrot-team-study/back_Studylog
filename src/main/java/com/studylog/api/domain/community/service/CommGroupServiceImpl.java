@@ -4,6 +4,7 @@ import com.studylog.api.domain.community.dto.CommGroupCreateRequest;
 import com.studylog.api.domain.community.dto.CommGroupDetailResponse;
 import com.studylog.api.domain.community.entity.CommGroup;
 import com.studylog.api.domain.community.repository.CommGroupRepository;
+import com.studylog.api.domain.community.repository.CommGroupTagRepository;
 import com.studylog.api.global.common.code.ErrorCode;
 import com.studylog.api.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,8 @@ public class CommGroupServiceImpl implements CommGroupService {
 
     private final CommGroupRepository commGroupRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CommGroupTagRepository commGroupTagRepository;
+
 
     //그룸 생성
     @Override
@@ -63,6 +68,11 @@ public class CommGroupServiceImpl implements CommGroupService {
         CommGroup group = commGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_NOT_FOUND));
 
+        List<Long> tagIds = commGroupTagRepository.findAllByIdGroupId(groupId).stream()
+                .map(gt -> gt.getId().getTagId())
+                .toList();
+
+
         return new CommGroupDetailResponse(
                 group.getGroupId(),
                 group.getMemberId(),
@@ -70,7 +80,8 @@ public class CommGroupServiceImpl implements CommGroupService {
                 group.getGroupIntro(),
                 group.getMaxUser(),
                 group.getDailyGoal(),
-                group.getCreatedAt()
+                group.getCreatedAt(),
+                tagIds
         );
     }
 }
