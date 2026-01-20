@@ -42,4 +42,13 @@ public class CommGroup {
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
 
+    //자동 날짜 세팅
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
+
+
 }

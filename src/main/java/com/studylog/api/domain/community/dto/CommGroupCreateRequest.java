@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class CommGroupCreateRequest {
 
@@ -18,4 +20,6 @@ public class CommGroupCreateRequest {
     private String passwordConfirm;//비밀번호 확인
     private Long maxUser;
     private Long dailyGoal;
+    private List<Long> tagIds;
+
 }

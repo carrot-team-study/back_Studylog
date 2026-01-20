@@ -1,6 +1,7 @@
 package com.studylog.api.domain.community.service;
 
 import com.studylog.api.domain.community.dto.CommGroupCreateRequest;
+import com.studylog.api.domain.community.dto.CommGroupDetailResponse;
 import com.studylog.api.domain.community.entity.CommGroup;
 import com.studylog.api.domain.community.repository.CommGroupRepository;
 import com.studylog.api.global.common.code.ErrorCode;
@@ -18,6 +19,7 @@ public class CommGroupServiceImpl implements CommGroupService {
     private final CommGroupRepository commGroupRepository;
     private final PasswordEncoder passwordEncoder;
 
+    //그룸 생성
     @Override
     public Long create(CommGroupCreateRequest req) {
 
@@ -52,5 +54,23 @@ public class CommGroupServiceImpl implements CommGroupService {
 
         return commGroupRepository.save(group).getGroupId();
 
+    }
+
+    //그룹 디테일
+    @Override
+    public CommGroupDetailResponse getDetail(Long groupId) {
+
+        CommGroup group = commGroupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_NOT_FOUND));
+
+        return new CommGroupDetailResponse(
+                group.getGroupId(),
+                group.getMemberId(),
+                group.getGroupName(),
+                group.getGroupIntro(),
+                group.getMaxUser(),
+                group.getDailyGoal(),
+                group.getCreatedAt()
+        );
     }
 }
