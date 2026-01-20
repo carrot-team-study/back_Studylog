@@ -59,7 +59,7 @@ public class SecurityConfig {
                 // URL 인증 설정
                 .authorizeHttpRequests(auth -> auth
                         // 로그인, 회원가입은 인증 불필요
-                        .requestMatchers("/api/member/login", "/api/member/signup","/api/member/refresh").permitAll()
+                        .requestMatchers("/api/member/login", "/api/member/signup","/api/member/refresh","/api/member/login/oauth/kakao").permitAll()
                         // Swagger 접근 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         // 나머지는 인증 필요

@@ -1,4 +1,26 @@
 package com.studylog.api.domain.member.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+
+@Getter
 public class KakaoTokenResponse {
+    //카카오 서버가 보내주는 유저 정보 응답(JSON)을 파싱하기 위한 DTO
+
+    @JsonProperty("token_type")
+    private String tokenType;
+
+    @JsonProperty("access_token")
+    private String accessToken;
+
+    @JsonProperty("expires_in")
+    private Integer expiresIn;
+
+    @JsonProperty("refresh_token")
+    private String refreshToken;
+
+    @JsonProperty("refresh_token_expires_in")
+    private Integer refreshTokenExpiresIn;
+
+    private String scope;
 }
