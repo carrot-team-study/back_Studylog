@@ -19,7 +19,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder; // 비밀번호 검증
     private final MemberRepository memberRepository;
 
-    public MemberResponse.Login login(MemberRequest.Login request){
+    public MemberResponse.LoginResponse login(MemberRequest.LoginRequest request){
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -42,14 +42,14 @@ public class MemberService {
         refreshTokenService.saveRefreshToken(email, refreshToken);
 
         // 6. 토큰 반환
-        return new MemberResponse.Login(accessToken, refreshToken);
+        return new MemberResponse.LoginResponse(accessToken, refreshToken);
 
     }
     public void logout(String email){
         refreshTokenService.deleteRefreshToken(email);
         SecurityContextHolder.clearContext();
     }
-    public MemberResponse.Login refresh(String refreshToken) {
+    public MemberResponse.LoginResponse refresh(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new RuntimeException("유효하지 않은 RefreshToken");
         }
@@ -66,10 +66,10 @@ public class MemberService {
 
         refreshTokenService.saveRefreshToken(email, newRefreshToken);
 
-        return new MemberResponse.Login(newAccessToken, newRefreshToken);
+        return new MemberResponse.LoginResponse(newAccessToken, newRefreshToken);
     }
     @Transactional
-    public void signup(MemberRequest.Singup request) {
+    public void signup(MemberRequest.SignupRequest request) {
         if (memberRepository.existsByMemberEmail(request.getEmail())) {
             throw new RuntimeException("이미 존재하는 이메일입니다");
         }

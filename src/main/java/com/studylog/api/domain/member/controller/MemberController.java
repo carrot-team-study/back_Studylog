@@ -17,8 +17,8 @@ public class MemberController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<MemberResponse.Login> login(@RequestBody MemberRequest.Login request) {
-    MemberResponse.Login response = memberService.login(request);
+    public ResponseEntity<MemberResponse.LoginResponse> login(@RequestBody MemberRequest.LoginRequest request) {
+    MemberResponse.LoginResponse response = memberService.login(request);
     return ResponseEntity.ok(response);
     }
 
@@ -30,12 +30,12 @@ public class MemberController {
 
     }
     @PostMapping("/refresh")
-    public ResponseEntity<MemberResponse.Login> refresh(@RequestBody String refreshToken) {
-        MemberResponse.Login response = memberService.refresh(refreshToken);
+    public ResponseEntity<MemberResponse.LoginResponse> refresh(@RequestBody String refreshToken) {
+        MemberResponse.LoginResponse response = memberService.refresh(refreshToken);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/signup")
-    public ResponseEntity<Void> singup(@RequestBody MemberRequest.Singup request){
+    public ResponseEntity<Void> singup(@RequestBody MemberRequest.SignupRequest request){
         memberService.signup(request);
         return ResponseEntity.ok().build();
     }

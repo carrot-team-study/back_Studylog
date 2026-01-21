@@ -7,13 +7,13 @@ public class MemberRequest {
 
     @Getter
     @NoArgsConstructor
-    public static class Login{
+    public static class LoginRequest{
     private String email;
     private String password;
     }
     @Getter
     @NoArgsConstructor
-    public static class Singup{
+    public static class SignupRequest{
         private String email;
         private String password;
         private String name;
