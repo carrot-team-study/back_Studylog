@@ -2,15 +2,13 @@ package com.studylog.api.domain.todo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity // DB 테이블과 연결
 @Table(name = "todo") // DB 테이블명 명시
-@Getter // Entity 값을 조회하기 위해 사용 (DTO 변환 및 조회 로직용)
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 전용 생성자
 public class Todo {
     @Id // Primary key
@@ -18,32 +16,32 @@ public class Todo {
     @Column(name = "todo_id")
     private Long todoId;
 
+    // 과목 번호
+    @Column(nullable = false)
     private Long subjectId;
+
+    // 회원 번호
+    @Column(nullable = false)
     private Long memberId;
 
+    // 내용
     @Column(nullable = false)
     private String content;
 
+    // 수행일
     private LocalDate targetDate;
 
-    @Column(name = "is_completed")
+    // 완료 여부
+    @Column(name = "is_completed", nullable = false)
     private boolean completed;
 
-    // 처음 등록시 현재 시간으로 자동 저장
-    @CreationTimestamp
+    // 등록일
     private LocalDateTime createdAt;
-
-    // 수정시 현재 시간으로 자동 갱신
-    @UpdateTimestamp
+    // 수정일
     private LocalDateTime updatedAt;
 
     @Builder
-    private Todo(
-            Long subjectId,
-            Long memberId,
-            String content,
-            LocalDate targetDate
-    ){
+    public Todo(Long subjectId, Long memberId, String content, LocalDate targetDate) {
         this.subjectId = subjectId;
         this.memberId = memberId;
         this.content = content;
@@ -51,8 +49,24 @@ public class Todo {
         this.completed = false;
     }
 
-    // 도메인 메서드
-    public void complete(){
-        this.completed = true;
+    // 완료 여부
+    public void complete(boolean completed) {
+        this.completed = completed;
+    }
+
+    public void update(String content, LocalDate targetDate) {
+        this.content = content;
+        this.targetDate = targetDate;
+    }
+
+    // Entity 저장/수정 시점을 생명주기로 관리
+    @PrePersist
+    void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

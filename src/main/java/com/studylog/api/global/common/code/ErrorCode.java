@@ -79,6 +79,7 @@ public enum ErrorCode {
     TIMER_RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "TIMER_006", "너무 자주 호출했습니다."),
     TIMER_CONCURRENCY_CONFLICT(HttpStatus.CONFLICT, "TIMER_007", "동시 수정 충돌이 발생했습니다."),
     TIMER_MAX_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "TIMER_008", "최대 학습시간 제한을 초과했습니다."),
+    TIMER_ALREADY_PAUSED(HttpStatus.BAD_REQUEST, "TIMER_009", "이미 일시정지된 상태입니다."),
 
     // REFLECTION
     REFLECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REFLECT_001", "회고를 찾을 수 없습니다."),
@@ -133,12 +134,14 @@ public enum ErrorCode {
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "INFRA_001", "일시적으로 서비스를 사용할 수 없습니다."),
     REDIS_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "REDIS_001", "캐시/세션 서버 오류입니다."),
     RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "RATE_001", "요청이 너무 많습니다."),
-    LOCK_FAIL(HttpStatus.CONFLICT, "LOCK_001", "처리 중입니다. 잠시 후 다시 시도해주세요.");
+    LOCK_FAIL(HttpStatus.CONFLICT, "LOCK_001", "처리 중입니다. 잠시 후 다시 시도해주세요."),
 
-
-
-
-
+    // TodoList
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO_001", "투두리스트를 찾을 수 없습니다."),
+    TODO_FORBIDDEN(HttpStatus.FORBIDDEN, "TODO_002", "해당 Todo에 대한 접근 권한이 없습니다."),
+    INVALID_TODO_DATE(HttpStatus.BAD_REQUEST, "TODO_003", "Todo 날짜 형식이 올바르지 않습니다."),
+    TODO_ALREADY_COMPLETED(HttpStatus.CONFLICT, "TODO_004", "이미 완료된 Todo입니다."),
+    INVALID_TODO_CONTENT(HttpStatus.BAD_REQUEST, "TODO_005", "Todo 내용이 비어있거나 너무 깁니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

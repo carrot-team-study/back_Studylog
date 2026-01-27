@@ -52,6 +52,9 @@ public enum SuccessCode {
     TIMER_AUTO_END_SUCCESS(HttpStatus.OK, "TIMER_200_2", "타이머 자동 종료 성공"),
     STUDY_LOG_LIST_SUCCESS(HttpStatus.OK, "TIMER_200_3", "학습기록 조회 성공"),
     STUDY_LOG_SUMMARY_SUCCESS(HttpStatus.OK, "TIMER_200_4", "학습기록 요약 성공"),
+    TIMER_STATUS_SUCCESS(HttpStatus.OK, "TIMER_200_5", "타이머 상태 조회 성공"),
+    TIMER_PAUSE_SUCCESS(HttpStatus.OK, "TIMER_200_6", "타이머 일시정지 성공"),
+    TIMER_RESUME_SUCCESS(HttpStatus.OK, "TIMER_200_7", "타이머 재개 성공"),
     MANUAL_STUDY_LOG_SUCCESS(HttpStatus.CREATED, "TIMER_201", "수동 학습 기록 성공"),
 
     // REFLECTION
@@ -86,7 +89,15 @@ public enum SuccessCode {
     // NOTIFICATION
     NOTIFICATION_LIST_SUCCESS(HttpStatus.OK, "NOTI_200", "알림 조회 성공"),
     NOTIFICATION_READ_SUCCESS(HttpStatus.OK, "NOTI_200_1", "알림 읽음 처리 성공"),
-    NOTIFICATION_SETTING_UPDATE_SUCCESS(HttpStatus.OK, "NOTI_200_2", "알림 설정 변경 성공");
+    NOTIFICATION_SETTING_UPDATE_SUCCESS(HttpStatus.OK, "NOTI_200_2", "알림 설정 변경 성공"),
+
+    // TODOLIST
+    TODO_CREATE_SUCCESS(HttpStatus.CREATED, "TODO_201", "Todo 등록 성공"),
+    TODO_UPDATE_SUCCESS(HttpStatus.OK, "TODO_200", "Todo 수정 성공"),
+    TODO_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "TODO_204", "Todo 삭제 성공"),
+    TODO_STATUS_UPDATE_SUCCESS(HttpStatus.OK, "TODO_200_1", "Todo 상태 변경 성공"),
+    TODO_LIST_SUCCESS(HttpStatus.OK, "TODO_200_2", "Todo 목록 조회 성공"),
+    TODO_LIST_BY_DATE_SUCCESS(HttpStatus.OK, "TODO_200_3", "날짜별 Todo 목록 조회 성공");
 
     private final HttpStatus httpStatus;
     private final String code;
