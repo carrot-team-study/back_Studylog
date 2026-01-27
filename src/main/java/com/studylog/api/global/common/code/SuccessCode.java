@@ -75,6 +75,9 @@ public enum SuccessCode {
     GROUP_ROLE_UPDATE_SUCCESS(HttpStatus.OK, "GROUP_200_3", "권한 변경 성공"),
     GROUP_KICK_SUCCESS(HttpStatus.NO_CONTENT, "GROUP_204", "그룹원 강퇴 성공"),
     GROUP_PLAN_LIST_SUCCESS(HttpStatus.OK, "GROUP_200_4", "그룹 내 계획 조회 성공"),
+    GROUP_DETAIL_SUCCESS(HttpStatus.OK, "GROUP_200_5", "그룹 상세 조회 성공"),
+    GROUP_LIST_SUCCESS(HttpStatus.OK, "GROUP_200_6", "그룹 리스트 조회 성공"),
+    GROUP_LEAVE_SUCCESS(HttpStatus.OK, "GROUP_200_7", "그룹 탈퇴 성공"),
 
     // RANK / LIKE
     GROUP_RANKING_SUCCESS(HttpStatus.OK, "RANK_200", "그룹 랭킹 조회 성공"),

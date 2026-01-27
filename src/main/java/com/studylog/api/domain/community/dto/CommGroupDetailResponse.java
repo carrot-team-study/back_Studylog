@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class CommGroupDetailResponse {
     private String groupIntro;
     private Long maxUser;
     private Long dailyGold;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     private List<Long> tagIds;
 
 }

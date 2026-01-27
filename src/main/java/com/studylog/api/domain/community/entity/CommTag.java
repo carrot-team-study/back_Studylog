@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class CommTag {
+public class CommTag {//태그 목록
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

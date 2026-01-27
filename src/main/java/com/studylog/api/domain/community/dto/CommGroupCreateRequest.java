@@ -9,8 +9,6 @@ import java.util.List;
 @Getter
 public class CommGroupCreateRequest {
 
-    @NotNull
-    private Long memberId; // 로그인 붙으면 이건 빼고 Security에서 꺼내면 됨
 
     @NotBlank
     private String groupName;
