@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class CommGroupCreateRequest {
 
-    @NotNull
-    private Long memberId; // 로그인 붙으면 이건 빼고 Security에서 꺼내면 됨
 
     @NotBlank
     private String groupName;
@@ -18,4 +18,6 @@ public class CommGroupCreateRequest {
     private String passwordConfirm;//비밀번호 확인
     private Long maxUser;
     private Long dailyGoal;
+    private List<Long> tagIds;
+
 }

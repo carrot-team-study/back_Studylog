@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,8 +19,8 @@ public class CommGroup {
     @Column(name = "group_id")
     private Long groupId;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "owner_member_id", nullable = false)
+    private Long ownerMemberId;
 
     @Column(name = "group_name", length = 30)
     private String groupName;
@@ -37,9 +38,39 @@ public class CommGroup {
     private Long dailyGoal;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "deleted_at")
-    private LocalDate deletedAt;
+    private LocalDateTime deletedAt;
+
+    @Column(name = "member_count", nullable = false)
+    private Integer memberCount;
+
+    //자동 날짜 세팅
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+        if (this.memberCount == null){
+            this.memberCount = 0;
+        }
+    }
+
+    //비밀방 : f / 공개방 : t
+    public boolean isPasswordRoom(){
+        return passwordHash != null;
+    }
+
+    public void increaseMemberCount() {
+        if (this.memberCount == null) this.memberCount = 0;
+        this.memberCount++;
+    }
+
+    public void decreaseMemberCount() {
+        if (this.memberCount == null) this.memberCount = 0;
+        if (this.memberCount > 0) this.memberCount--;
+    }
+
 
 }
