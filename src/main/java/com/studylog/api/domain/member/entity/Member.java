@@ -87,4 +87,14 @@ public class Member {
                 .build();
 
     }
+    public void updatePassword(String newPassword) {
+        this.memberPassword = newPassword;
+    }
+    public void updateProfilePhoto(String profilePhotoUrl) {
+        this.memberProfilePhoto = profilePhotoUrl;
+    }
+    public void withdraw() {
+        this.memberStatus = "DELETED";
+        this.deletedAt = LocalDateTime.now();
+    }
 }

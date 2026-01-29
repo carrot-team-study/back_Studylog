@@ -84,7 +84,79 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
+    }
+    @Transactional
+    public void changePassword(String email, MemberRequest.PasswordChangeRequest request) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
+        if (!passwordEncoder.matches(request.getCurrentPassword(), member.getMemberPassword())) {
+            throw new RuntimeException("현재 비밀번호가 일치하지 않습니다");
+        }
+        member.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+        memberRepository.save(member);
 
     }
+    public MemberResponse.MyInfoResponse getMyInfo(String email) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        return new MemberResponse.MyInfoResponse(
+                member.getMemberEmail(),
+                member.getMemberName(),
+                member.getMemberNickname(),
+                member.getMemberProfilePhoto(),
+                member.getMemberType(),
+                member.getMemberStatus(),
+                member.getCreatedAt()
+        );
     }
+    public MemberResponse.FindEmailResponse findEmail(MemberRequest.FindEmailRequest request) {
+        Member member = memberRepository.findByMemberName(request.getName())
+                .orElseThrow(() -> new RuntimeException("해당 이름의 사용자를 찾을 수 없습니다"));
+
+        String maskedEmail = maskEmail(member.getMemberEmail());
+        return new MemberResponse.FindEmailResponse(maskedEmail);
+    }
+
+    private String maskEmail(String email) {
+        String[] parts = email.split("@");
+        String localPart = parts[0];
+        int visibleChars = Math.min(3, localPart.length());
+        String masked = localPart.substring(0, visibleChars) + "***";
+        return masked + "@" + parts[1];
+    }
+    @Transactional
+    public void updateProfilePhoto(String email, MemberRequest.UpdateProfilePhotoRequest request) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        member.updateProfilePhoto(request.getProfilePhotoUrl());
+        memberRepository.save(member);
+    }
+    @Transactional
+    public void deleteProfilePhoto(String email) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        member.updateProfilePhoto("DEFAULT");
+        memberRepository.save(member);
+    }
+    @Transactional
+    public void withdraw(String email, MemberRequest.WithdrawRequest request) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        if (!passwordEncoder.matches(request.getPassword(), member.getMemberPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다");
+        }
+        member.withdraw();
+        memberRepository.save(member);
+        // RefreshToken 삭제
+        refreshTokenService.deleteRefreshToken(email);
+    }
+
+
+
+
+}
