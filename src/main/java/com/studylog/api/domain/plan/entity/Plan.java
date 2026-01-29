@@ -50,7 +50,7 @@ public class Plan extends BaseTimeEntity {
         this.endTime = endTime;
     }
 
-    public void setIsCompleted(){
+    public void toggleCompletion(){
         this.isCompleted = !this.isCompleted;
     }
 }

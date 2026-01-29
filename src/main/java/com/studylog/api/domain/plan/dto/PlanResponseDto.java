@@ -1,5 +1,6 @@
 package com.studylog.api.domain.plan.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.studylog.api.domain.member.entity.Member;
 import com.studylog.api.domain.plan.entity.Plan;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,16 +26,19 @@ public class PlanResponseDto {
     @Schema(description = "내용")
     private String content;
 
-    @Schema(description = "목표 날짜")  // ✅ 추가
+    @Schema(description = "목표 날짜")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate targetDate;
 
     @Schema(description = "완료 여부")
     private boolean isCompleted;
 
     @Schema(description = "시작 시간")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
     @Schema(description = "종료 시간")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
     @Schema(description = "생성 시간")
