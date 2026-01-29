@@ -8,12 +8,14 @@ public class MemberRequest {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoginRequest{
     private String email;
     private String password;
     }
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class SignupRequest{
         private String email;
         private String password;
