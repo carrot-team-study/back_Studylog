@@ -32,7 +32,6 @@ public class TimerService {
     private String timerKey(Long memberId, Long subjectId) {
         return TIMER_KEY_PREFIX + memberId + ":" + subjectId;
     }
-
     private String pauseKey(Long memberId, Long subjectId) {
         return PAUSE_KEY_PREFIX + memberId + ":" + subjectId;
     }

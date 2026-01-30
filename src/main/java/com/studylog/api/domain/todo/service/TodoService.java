@@ -57,20 +57,42 @@ public class TodoService {
     }
 
     // TodoList 수정
-    public void update(Long todoId, TodoUpdateRequest request) {
-        Todo todo = todoRepository.findById(todoId).orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+    public void update(Long todoId, TodoUpdateRequest request, Long memberId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+
+        // 본인 소유인지 체크
+        if (!todo.getMemberId().equals(memberId)) {
+            // 본인만 수정 가능
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
         todo.update(request.getContent(), request.getTargetDate());
     }
 
     // TodoList 완료 상태
-    public void updateComplete(Long todoId, boolean completed) {
-        Todo todo = todoRepository.findById(todoId).orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+    public void updateComplete(Long todoId, boolean completed, Long memberId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+
+        // 본인 소유인지 체크
+        if (!todo.getMemberId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN); // 본인만 완료/취소 가능
+        }
+
         todo.complete(completed);
     }
 
     // TodoList 삭제
-    public void delete(Long todoId) {
-        Todo todo = todoRepository.findById(todoId).orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+    public void delete(Long todoId, Long memberId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TODO_NOT_FOUND));
+
+        // 본인 소유인지 체크
+        if (!todo.getMemberId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN); // 본인만 삭제 가능
+        }
+
         todoRepository.delete(todo);
     }
 }

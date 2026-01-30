@@ -5,4 +5,3 @@ spring:
     name: studylog-api
   profiles:
     active: local
-
