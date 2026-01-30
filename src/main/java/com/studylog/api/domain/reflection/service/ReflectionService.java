@@ -41,8 +41,8 @@ public class ReflectionService {
         reflectionRepository.save(reflection);
     }
 
-    // 회고 수정
-    public void updateReflection(Long reflectionId, ReflectionRequestDto dto) {
+    // 회고 수정 (본인 전용)
+    public void updateReflection(Long reflectionId, ReflectionRequestDto dto, Long memberId) {
         if (dto.getContent() == null || dto.getContent().isBlank()) {
             throw new BusinessException(ErrorCode.INVALID_REFLECTION_CONTENT);
         }
@@ -50,13 +50,23 @@ public class ReflectionService {
         Reflection reflection = reflectionRepository.findById(reflectionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFLECTION_NOT_FOUND));
 
+        // 본인 소유인지 체크
+        if (!reflection.getMemberId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN); // 본인만 수정 가능
+        }
+
         reflection.updateContent(dto.getContent());
     }
 
-    // 회고 삭제
-    public void deleteReflection(Long reflectionId) {
+    // 회고 삭제 (본인 전용)
+    public void deleteReflection(Long reflectionId, Long memberId) {
         Reflection reflection = reflectionRepository.findById(reflectionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFLECTION_NOT_FOUND));
+
+        // 본인 소유인지 체크
+        if (!reflection.getMemberId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN); // 본인만 삭제 가능
+        }
 
         reflectionRepository.delete(reflection);
     }
@@ -71,4 +81,3 @@ public class ReflectionService {
                 .toList();
     }
 }
-
