@@ -63,6 +63,7 @@ public class SecurityConfig {
                         // Swagger 접근 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","api/db/ping").permitAll()
                         // 나머지는 인증 필요
+                        .requestMatchers("/api/notifications/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
