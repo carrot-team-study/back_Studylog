@@ -14,13 +14,13 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @Builder
-@Entity(name="PLAN_INFO")
+@Entity(name="plan_info")
 public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long planId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String title;
 
     private String content;
@@ -34,9 +34,6 @@ public class Plan extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalTime endTime;
 
-    @Column(nullable = false)
-    private boolean isCompleted = false;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -48,9 +45,5 @@ public class Plan extends BaseTimeEntity {
         this.targetDate = targetDate;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public void toggleCompletion(){
-        this.isCompleted = !this.isCompleted;
     }
 }

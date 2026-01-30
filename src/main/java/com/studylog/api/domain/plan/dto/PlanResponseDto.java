@@ -1,7 +1,6 @@
 package com.studylog.api.domain.plan.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.studylog.api.domain.member.entity.Member;
 import com.studylog.api.domain.plan.entity.Plan;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -20,6 +19,9 @@ public class PlanResponseDto {
     @Schema(description = "플랜 ID")
     private Long planId;
 
+    @Schema(description = "회원 ID")
+    private Long memberId;
+
     @Schema(description = "제목")
     private String title;
 
@@ -29,9 +31,6 @@ public class PlanResponseDto {
     @Schema(description = "목표 날짜")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate targetDate;
-
-    @Schema(description = "완료 여부")
-    private boolean isCompleted;
 
     @Schema(description = "시작 시간")
     @JsonFormat(pattern = "HH:mm")
@@ -50,12 +49,12 @@ public class PlanResponseDto {
     public static PlanResponseDto from(Plan plan) {
         return PlanResponseDto.builder()
                 .planId(plan.getPlanId())
+                .memberId(plan.getMember().getMemberId())
                 .title(plan.getTitle())
                 .content(plan.getContent())
                 .targetDate(plan.getTargetDate())
                 .startTime(plan.getStartTime())
                 .endTime(plan.getEndTime())
-                .isCompleted(plan.isCompleted())
                 .createdAt(plan.getCreatedAt())
                 .updatedAt(plan.getUpdatedAt())
                 .build();

@@ -18,7 +18,7 @@ import java.time.LocalTime;
 @Getter
 public class PlanRequestDto {
 
-    @NotBlank(message = "제목은 필수입니다.")
+    @NotBlank(message = "제목은 필수입니다. 20자까지.")
     @Schema(description = "제목", requiredMode = Schema.RequiredMode.REQUIRED)
     private String title;
 

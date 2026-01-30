@@ -1,9 +1,8 @@
 package com.studylog.api.domain.subject.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.studylog.api.domain.member.entity.Member;
+import com.studylog.api.global.entity.BaseTimeEntity;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
@@ -14,14 +13,27 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@Entity(name="SUBJECT_INFO")
-public class Subject {
+@Entity(name="subject_info")
+public class Subject extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subjectId;
-    private Long memberId;
+
+    @Column(nullable = false, length = 20)
     private String subjectName;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Boolean isDeleted;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public void updateSubject(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }

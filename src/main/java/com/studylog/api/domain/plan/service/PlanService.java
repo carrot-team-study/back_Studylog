@@ -45,9 +45,13 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanResponseDto updatePlan(Long planId, PlanRequestDto request) {
+    public PlanResponseDto updatePlan(Long memberId, Long planId, PlanRequestDto request) {
         Plan plan =  planRepository.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException(planId + "번 플랜 없음"));
+
+        if (!plan.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
 
         boolean isOverlapping = planRepository.isUpdatePlanOverlapped(
                 plan.getMember().getMemberId(),
@@ -73,14 +77,26 @@ public class PlanService {
     }
 
     @Transactional
-    public void deletePlan(Long planId) {
+    public void deletePlan(Long memberId, Long planId) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new IllegalArgumentException("계획을 찾을 수 없습니다."));
+
+        if (!plan.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
         planRepository.deleteById(planId);
     }
 
     @Transactional(readOnly=true)
-    public PlanResponseDto getPlanById(Long planId) {
-        Plan plan =  planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException(planId + "번 플랜 없음"));
+    public PlanResponseDto getPlanById(Long memberId, Long planId) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new IllegalArgumentException("계획을 찾을 수 없습니다."));
+
+        if (!plan.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
         return PlanResponseDto.from(plan);
     }
 
@@ -90,15 +106,5 @@ public class PlanService {
                 .stream()
                 .map(PlanResponseDto::from)
                 .toList();
-    }
-
-    @Transactional
-    public PlanResponseDto togglePlanCompletion(Long planId) {
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보 오류: 해당 계획을 찾을 수 없습니다."));
-
-        plan.toggleCompletion();
-
-        return PlanResponseDto.from(plan);
     }
 }
