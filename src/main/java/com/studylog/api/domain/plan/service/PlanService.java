@@ -7,7 +7,6 @@ import com.studylog.api.domain.plan.dto.PlanResponseDto;
 import com.studylog.api.domain.plan.entity.Plan;
 import com.studylog.api.domain.plan.repository.PlanRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

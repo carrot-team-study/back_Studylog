@@ -9,12 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "plan")
 @Getter
-@Setter
-@Builder
-@Entity(name="plan_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +35,17 @@ public class Plan extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Plan(String title, String content, LocalDate targetDate,
+                LocalTime startTime, LocalTime endTime, Member member) {
+        this.title = title;
+        this.content = content;
+        this.targetDate = targetDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.member = member;
+    }
 
     public void updateInfo(String title, String content, LocalDate targetDate,
                            LocalTime startTime, LocalTime endTime) {

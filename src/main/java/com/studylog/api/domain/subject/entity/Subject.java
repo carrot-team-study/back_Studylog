@@ -8,12 +8,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "subject")
 @Getter
-@Setter
-@Builder
-@Entity(name="subject_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Subject extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +26,13 @@ public class Subject extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Subject(String subjectName, Member member) {
+        this.subjectName = subjectName;
+        this.member = member;
+        this.isDeleted = false;
+    }
 
     public void updateSubject(String subjectName) {
         this.subjectName = subjectName;
