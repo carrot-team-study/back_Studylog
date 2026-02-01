@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -46,6 +47,23 @@ public class GlobalExceptionHandler {
                 fe.getField(),
                 fe.getDefaultMessage() == null ? "Invalid" : fe.getDefaultMessage()
         );
+    }
+
+    // 요청 파라미터 타입 변환 실패 처리 (예: order enum 오류, page/size 숫자 변환 실패)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e, HttpServletRequest req) {
+        // 어떤 파라미터에서 변환이 실패했는지(name)로 에러코드 분기
+        String paramName = e.getName(); // "order", "page", "size" 등
+
+        ErrorCode ec;
+        if ("order".equals(paramName)) ec = ErrorCode.INVALID_SORT;
+        else if ("page".equals(paramName)) ec = ErrorCode.INVALID_PAGE;
+        else if ("size".equals(paramName)) ec = ErrorCode.INVALID_SIZE;
+        else ec = ErrorCode.INVALID_REQUEST_PARAM;
+
+        return ResponseEntity
+                .status(ec.getHttpStatus())
+                .body(ErrorResponse.error(ec.getCode(), ec.getMessage(), null, req.getRequestURI()));
     }
 
 }

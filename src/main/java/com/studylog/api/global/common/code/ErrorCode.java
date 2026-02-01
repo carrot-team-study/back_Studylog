@@ -17,7 +17,7 @@ public enum ErrorCode {
     VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "COMMON_005", "요청 값 검증에 실패했습니다."),
     EMPTY_BODY(HttpStatus.BAD_REQUEST, "COMMON_006", "요청 본문이 비어있습니다."),
     MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON_007", "요청 파라미터가 누락되었습니다."),
-
+    INVALID_REQUEST_PARAM(HttpStatus.BAD_REQUEST, "COMMON_008", "요청 파라미터가 올바르지 않습니다."),
     // AUTH
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH_001", "인증이 필요합니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
@@ -26,6 +26,7 @@ public enum ErrorCode {
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "AUTH_005", "로그인 정보가 올바르지 않습니다."),
     LOGIN_TRY_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "AUTH_006", "로그인 시도 횟수를 초과했습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST, "AUTH_007", "로그아웃 처리할 수 없습니다."),
+    AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH_008", "인증 정보가 없습니다."),
 
     // USER
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER_001", "이미 사용 중인 이메일입니다."),
@@ -78,6 +79,7 @@ public enum ErrorCode {
     TIMER_RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "TIMER_006", "너무 자주 호출했습니다."),
     TIMER_CONCURRENCY_CONFLICT(HttpStatus.CONFLICT, "TIMER_007", "동시 수정 충돌이 발생했습니다."),
     TIMER_MAX_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "TIMER_008", "최대 학습시간 제한을 초과했습니다."),
+    TIMER_ALREADY_PAUSED(HttpStatus.BAD_REQUEST, "TIMER_009", "이미 일시정지된 상태입니다."),
 
     // REFLECTION
     REFLECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REFLECT_001", "회고를 찾을 수 없습니다."),
@@ -103,6 +105,18 @@ public enum ErrorCode {
     INVITE_LINK_EXPIRED(HttpStatus.CONFLICT, "GROUP_010", "초대 링크가 만료되었습니다."),
     GROUP_NAME_DUPLICATED(HttpStatus.CONFLICT,"GROUP_011","중복돤 그룹명입니다."),
     GROUP_PASSWORD_MISMATCH(HttpStatus.CONFLICT,"GROUP_012","비말번호와 비밀번호확인이 일치하지 않습니다."),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"GROUP_013","태그를 찾을 수 없습니다."),
+    INVALID_SORT(HttpStatus.BAD_REQUEST, "GROUP_014", "정렬 값이 올바르지 않습니다."),
+    INVALID_PAGE(HttpStatus.BAD_REQUEST, "GROUP_015", "page 값이 올바르지 않습니다."),
+    INVALID_SIZE(HttpStatus.BAD_REQUEST, "GROUP_016", "size 값이 올바르지 않습니다."),
+    GROUP_PASSWORD_REQUIRED(HttpStatus.FORBIDDEN, "GROUP_017", "그룹 비밀번호 입력이 필요합니다."),
+    BANNED_GROUP_MEMBER(HttpStatus.CONFLICT, "GROUP_017", "강퇴된 멤버는 다시 가입할 수 없습니다."),
+    GROUP_NOT_JOIN(HttpStatus.CONFLICT,"GROUP_018","가입 정보가 없습니다."),
+    ALREADY_NOT_ACTIVE(HttpStatus.CONFLICT, "GROUP_019", "이미 탈퇴한 회원입니다."),
+    GROUP_MAX_USER_INVALID(HttpStatus.BAD_REQUEST, "CGROUP_019", "최대 인원은 최소 1명 이상"),
+
+    //Member
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_001", "사용자를 찾을 수 없습니다."),
 
     // LIKE / RANK
     LIKE_ALREADY_SENT(HttpStatus.CONFLICT, "LIKE_001", "이미 좋아요를 보냈습니다."),
@@ -120,12 +134,14 @@ public enum ErrorCode {
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "INFRA_001", "일시적으로 서비스를 사용할 수 없습니다."),
     REDIS_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "REDIS_001", "캐시/세션 서버 오류입니다."),
     RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "RATE_001", "요청이 너무 많습니다."),
-    LOCK_FAIL(HttpStatus.CONFLICT, "LOCK_001", "처리 중입니다. 잠시 후 다시 시도해주세요.");
+    LOCK_FAIL(HttpStatus.CONFLICT, "LOCK_001", "처리 중입니다. 잠시 후 다시 시도해주세요."),
 
-
-
-
-
+    // TodoList
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO_001", "투두리스트를 찾을 수 없습니다."),
+    TODO_FORBIDDEN(HttpStatus.FORBIDDEN, "TODO_002", "해당 Todo에 대한 접근 권한이 없습니다."),
+    INVALID_TODO_DATE(HttpStatus.BAD_REQUEST, "TODO_003", "Todo 날짜 형식이 올바르지 않습니다."),
+    TODO_ALREADY_COMPLETED(HttpStatus.CONFLICT, "TODO_004", "이미 완료된 Todo입니다."),
+    INVALID_TODO_CONTENT(HttpStatus.BAD_REQUEST, "TODO_005", "Todo 내용이 비어있거나 너무 깁니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
