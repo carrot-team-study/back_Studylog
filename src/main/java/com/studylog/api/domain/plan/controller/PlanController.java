@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/plans")
 @RequiredArgsConstructor
 public class PlanController {
+
     private final PlanService planService;
 
     @Operation(summary = "계획 등록", description = "새로운 계획을 등록합니다.")

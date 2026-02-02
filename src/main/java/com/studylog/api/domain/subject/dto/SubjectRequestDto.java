@@ -24,7 +24,6 @@ public class SubjectRequestDto {
     public Subject toEntity(Member member) {
         return Subject.builder()
                 .subjectName(subjectName)
-                .isDeleted(false)
                 .member(member)
                 .build();
     }

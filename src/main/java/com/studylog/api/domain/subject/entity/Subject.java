@@ -31,7 +31,6 @@ public class Subject extends BaseTimeEntity {
     public Subject(String subjectName, Member member) {
         this.subjectName = subjectName;
         this.member = member;
-        this.isDeleted = false;
     }
 
     public void updateSubject(String subjectName) {

@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface StatRepository extends JpaRepository<Stat, Long> {
-
+    // 특정 회원의 특정 날짜 통계 조회
     Optional<Stat> findByMemberIdAndStatDate(Long memberId, LocalDate statDate);
 }

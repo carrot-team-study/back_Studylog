@@ -7,9 +7,9 @@
         SELECT
             stat_date as startDate,
             total_study_time as totalStudyTime
-            FROM statistics
+        FROM statistics
         WHERE member_id = #{memberId}
-        AND stat_date BETWEEN #{startDate} AND #{endDate}
+            AND stat_date BETWEEN #{startDate} AND #{endDate}
         ORDER BY stat_date ASC
     </select>
 
@@ -19,20 +19,20 @@
             s.subject_name AS subjectName,
             SUM(t.duration) AS totalStudyTime,
             ROUND(
-                SUM(t.duration) * 100.0 /
+                CAST(SUM(t.duration) * 100.0 /
                 NULLIF((
                     SELECT SUM(duration)
                     FROM timer
                     WHERE member_id = #{memberId}
                         AND timer_date BETWEEN #{startDate} AND #{endDate}
-                ), 0),
+                ), 0) AS NUMERIC),
                 1
             ) AS ratio
         FROM timer t
         INNER JOIN subject s ON t.subject_id = s.subject_id
         WHERE t.member_id = #{memberId}
-            AND t.timer_date BETWEEN #{startDate} AND #{endDate}
-        GROUP BY s.subject_id, s.name
+        AND t.timer_date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY s.subject_id, s.subject_name
         ORDER BY totalStudyTime DESC
     </select>
 

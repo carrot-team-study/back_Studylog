@@ -67,9 +67,9 @@ public class StatService {
         LocalDate startDate = month.atDay(1);
         LocalDate endDate = month.atEndOfMonth();
 
-        // 이번 달이면 오늘까지만
+        // 이번 달이면 어제까지만 (오늘은 집계 전)
         if (month.equals(YearMonth.now())) {
-            endDate = LocalDate.now().minusDays(1); // 어제까지 (오늘은 아직 집계 안됨)
+            endDate = LocalDate.now().minusDays(1);
         }
 
         return getDailyStats(memberId, startDate, endDate);

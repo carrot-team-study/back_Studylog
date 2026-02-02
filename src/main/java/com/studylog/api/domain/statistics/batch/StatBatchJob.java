@@ -30,7 +30,7 @@ public class StatBatchJob {
      */
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional
-    public void aggregateDailyStats() {
+    public void calculateDailyStats() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
         log.info("=== 일일 통계 집계 시작: {} (기준: 4시~4시) ===", yesterday);
@@ -40,7 +40,7 @@ public class StatBatchJob {
 
         for (Member member : members) {
             try {
-                // 1. 중복 체크
+                // 중복 체크
                 Optional<Stat> existing = statRepository
                         .findByMemberIdAndStatDate(member.getMemberId(), yesterday);
 
@@ -50,16 +50,16 @@ public class StatBatchJob {
                     continue;
                 }
 
-                // 2. timer에서 어제 기록 조회 (timer_date 기준)
+                // timer에서 어제 기록 조회 (timer_date)
                 List<Timer> timers = timerRepository
-                        .findByMemberIdAndTimerDate(member.getMemberId(), yesterday);
+                        .findAllByMemberIdAndTimerDate(member.getMemberId(), yesterday);
 
-                // 3. duration 합산
+                // duration 합산
                 long totalSeconds = timers.stream()
-                        .mapToLong(Timer::getDuration)
+                        .mapToLong(timer -> timer.getDuration().longValue())
                         .sum();
 
-                // 4. statistics 저장 (0초여도 저장)
+                // statistics 저장 (0초도 저장)
                 Stat stat = Stat.builder()
                         .memberId(member.getMemberId())
                         .statDate(yesterday)

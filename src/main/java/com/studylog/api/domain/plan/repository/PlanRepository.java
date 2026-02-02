@@ -12,9 +12,11 @@ import java.util.List;
 
 @Repository
 public interface PlanRepository extends JpaRepository<Plan,Long> {
+
+    // 특정 날짜의 계획 목록 조회 (시작 시간 순 정렬)
     List<Plan> findAllByMemberIdAndTargetDateOrderByStartTimeAsc(Long memberId, LocalDate targetDate);
 
-
+    // 새 계획 등록 시 시간 겹치는지 확인
     @Query("SELECT COUNT(p) > 0 FROM Plan p " +
             "WHERE p.member.id = :memberId " +
             "AND p.targetDate = :targetDate " +
@@ -27,6 +29,7 @@ public interface PlanRepository extends JpaRepository<Plan,Long> {
             @Param("endTime") LocalTime endTime
     );
 
+    // 계획 수정 시 시간 겹치는지 확인 (본인 계획 제외)
     @Query("SELECT COUNT(p) > 0 FROM Plan p " +
             "WHERE p.member.id = :memberId " +
             "AND p.targetDate = :targetDate " +
