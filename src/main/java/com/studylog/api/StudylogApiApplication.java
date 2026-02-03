@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@MapperScan("com.studylog.api.domain.**.mapper")
+@MapperScan("com.studylog.api.mapper")
 @EnableJpaAuditing
 @EnableScheduling
 public class StudylogApiApplication {

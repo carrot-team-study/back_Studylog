@@ -101,7 +101,7 @@ public class PlanService {
 
     @Transactional(readOnly=true)
     public List<PlanResponseDto> getPlansByDate(Long memberId, LocalDate targetDate) {
-        return planRepository.findAllByMemberIdAndTargetDateOrderByStartTimeAsc(memberId, targetDate)
+        return planRepository.findAllByMemberMemberIdAndTargetDateOrderByStartTimeAsc(memberId, targetDate)
                 .stream()
                 .map(PlanResponseDto::from)
                 .toList();

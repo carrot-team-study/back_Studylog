@@ -14,11 +14,11 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<Plan,Long> {
 
     // 특정 날짜의 계획 목록 조회 (시작 시간 순 정렬)
-    List<Plan> findAllByMemberIdAndTargetDateOrderByStartTimeAsc(Long memberId, LocalDate targetDate);
+    List<Plan> findAllByMemberMemberIdAndTargetDateOrderByStartTimeAsc(Long memberId, LocalDate targetDate);
 
     // 새 계획 등록 시 시간 겹치는지 확인
     @Query("SELECT COUNT(p) > 0 FROM Plan p " +
-            "WHERE p.member.id = :memberId " +
+            "WHERE p.member.memberId = :memberId " +
             "AND p.targetDate = :targetDate " +
             "AND p.startTime < :endTime " +
             "AND p.endTime > :startTime ")
@@ -31,11 +31,11 @@ public interface PlanRepository extends JpaRepository<Plan,Long> {
 
     // 계획 수정 시 시간 겹치는지 확인 (본인 계획 제외)
     @Query("SELECT COUNT(p) > 0 FROM Plan p " +
-            "WHERE p.member.id = :memberId " +
+            "WHERE p.member.memberId = :memberId " +
             "AND p.targetDate = :targetDate " +
             "AND p.startTime < :endTime " +
             "AND p.endTime > :startTime " +
-            "AND p.id != :planId")
+            "AND p.planId != :planId")
     Boolean isUpdatePlanOverlapped(
             @Param("memberId") Long memberId,
             @Param("targetDate") LocalDate targetDate,
