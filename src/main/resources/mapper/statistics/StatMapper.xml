@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylog.api.mapper.statistics.StatMapper">
+
+    <!-- 기간동안의 일일통계 조회 -->
+    <select id="getStatsList" resultType="StatDto">
+        SELECT
+            stat_date as startDate,
+            total_study_time as totalStudyTime
+        FROM statistics
+        WHERE member_id = #{memberId}
+            AND stat_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY stat_date ASC
+    </select>
+
+    <!-- 기간동안의 과목통계 조회 -->
+    <select id="getSubjectStats" resultType="com.studylog.api.domain.statistics.dto.StatDto">
+        SELECT
+            s.subject_name AS subjectName,
+            SUM(t.duration) AS totalStudyTime,
+            ROUND(
+                CAST(SUM(t.duration) * 100.0 /
+                NULLIF((
+                    SELECT SUM(duration)
+                    FROM timer
+                    WHERE member_id = #{memberId}
+                        AND timer_date BETWEEN #{startDate} AND #{endDate}
+                ), 0) AS NUMERIC),
+                1
+            ) AS ratio
+        FROM timer t
+        INNER JOIN subject s ON t.subject_id = s.subject_id
+        WHERE t.member_id = #{memberId}
+        AND t.timer_date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY s.subject_id, s.subject_name
+        ORDER BY totalStudyTime DESC
+    </select>
+
+    <!-- 오늘 학습 시간 (실시간) -->
+    <select id="getTodayStudyTime" resultType="long">
+        SELECT COALESCE(SUM(duration), 0)
+        FROM timer
+        WHERE member_id = #{memberId}
+            AND timer_date = #{today}
+    </select>
+
+</mapper>
