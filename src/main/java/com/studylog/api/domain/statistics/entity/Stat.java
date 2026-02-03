@@ -1,5 +1,6 @@
 package com.studylog.api.domain.statistics.entity;
 
+import com.studylog.api.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,9 +21,6 @@ public class Stat {
     private Long statId;
 
     @Column(nullable = false)
-    private Long memberId;
-
-    @Column(nullable = false)
     private LocalDate statDate;
 
     @Column(nullable = false)
@@ -32,9 +30,13 @@ public class Stat {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public Stat(Long memberId, LocalDate statDate, Long totalStudyTime) {
-        this.memberId = memberId;
+    public Stat(Member member, LocalDate statDate, Long totalStudyTime) {
+        this.member = member;
         this.statDate = statDate;
         this.totalStudyTime = totalStudyTime;
     }

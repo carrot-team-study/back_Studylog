@@ -14,7 +14,7 @@
     </select>
 
     <!-- 기간동안의 과목통계 조회 -->
-    <select id="getSubjectStats" resultType="com.studylog.api.domain.statistics.dto.StatDto">
+    <select id="getSubjectStats" resultType="StatSubjectDto">
         SELECT
             s.subject_name AS subjectName,
             SUM(t.duration) AS totalStudyTime,

@@ -42,7 +42,7 @@ public class StatBatchJob {
             try {
                 // 중복 체크
                 Optional<Stat> existing = statRepository
-                        .findByMemberIdAndStatDate(member.getMemberId(), yesterday);
+                        .findByMemberMemberIdAndStatDate(member.getMemberId(), yesterday);
 
                 if (existing.isPresent()) {
                     log.warn("이미 집계된 데이터 스킵: memberId={}, date={}",
@@ -61,7 +61,7 @@ public class StatBatchJob {
 
                 // statistics 저장 (0초도 저장)
                 Stat stat = Stat.builder()
-                        .memberId(member.getMemberId())
+                        .member(member)
                         .statDate(yesterday)
                         .totalStudyTime(totalSeconds)
                         .build();

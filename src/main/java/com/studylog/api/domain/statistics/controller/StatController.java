@@ -23,54 +23,20 @@ public class StatController {
 
     private final StatService statService;
 
-    @Operation(summary = "일간 통계 조회", description = "특정 기간의 일별 학습 통계를 조회합니다.")
-    @GetMapping("/daily")
-    public ResponseEntity<List<StatDto>> getDailyStats(
-            @RequestHeader("memberId") Long memberId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(statService.getDailyStats(memberId, startDate, endDate));
-    }
-
-    @Operation(summary = "주간 통계 조회", description = "특정 주의 일별 학습 통계를 조회합니다 (7일)")
+    @Operation(summary = "주간 통계 조회", description = "주간 총합 + 날짜별 + 과목별 통계를 조회합니다.")
     @GetMapping("/weekly")
-    public ResponseEntity<List<StatDto>> getWeeklyStats(
+    public ResponseEntity<StatDto> getWeekly(
             @RequestHeader("memberId") Long memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart) {
-        return ResponseEntity.ok(statService.getWeeklyStats(memberId, weekStart));
+        return ResponseEntity.ok(statService.getWeekly(memberId, weekStart));
     }
 
-    @Operation(summary = "주간 합계 조회", description = "특정 주의 총 학습시간을 조회합니다.")
-    @GetMapping("/weekly/summary")
-    public ResponseEntity<StatDto> getWeeklySummary(
-            @RequestHeader("memberId") Long memberId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart) {
-        return ResponseEntity.ok(statService.getWeeklySummary(memberId, weekStart));
-    }
-
-    @Operation(summary = "월간 통계 조회", description = "특정 월의 일별 학습 통계를 조회합니다.")
+    @Operation(summary = "월간 통계 조회", description = "월간 총합 + 날짜별 + 과목별 통계를 조회합니다.")
     @GetMapping("/monthly")
-    public ResponseEntity<List<StatDto>> getMonthlyStats(
+    public ResponseEntity<StatDto> getMonthly(
             @RequestHeader("memberId") Long memberId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth month) {
-        return ResponseEntity.ok(statService.getMonthlyStats(memberId, month));
-    }
-
-    @Operation(summary = "월간 합계 조회", description = "특정 월의 총 학습시간을 조회합니다.")
-    @GetMapping("/monthly/summary")
-    public ResponseEntity<StatDto> getMonthlySummary(
-            @RequestHeader("memberId") Long memberId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth month) {
-        return ResponseEntity.ok(statService.getMonthlySummary(memberId, month));
-    }
-
-    @Operation(summary = "과목별 통계 조회", description = "특정 기간의 과목별 학습 통계를 조회합니다.")
-    @GetMapping("/subjects")
-    public ResponseEntity<List<StatDto>> getSubjectStats(
-            @RequestHeader("memberId") Long memberId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(statService.getSubjectStats(memberId, startDate, endDate));
+        return ResponseEntity.ok(statService.getMonthly(memberId, month));
     }
 
     @Operation(summary = "오늘 학습시간 조회", description = "오늘의 실시간 학습시간을 조회합니다.")

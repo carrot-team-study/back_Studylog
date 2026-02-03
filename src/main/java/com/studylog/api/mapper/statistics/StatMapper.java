@@ -1,6 +1,7 @@
 package com.studylog.api.mapper.statistics;
 
 import com.studylog.api.domain.statistics.dto.StatDto;
+import com.studylog.api.domain.statistics.dto.StatSubjectDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,7 +25,7 @@ public interface StatMapper {
      * 과목별 통계 조회 (기간별 과목통계)
      * timer 테이블 기반
      */
-    List<StatDto> getSubjectStats(
+    List<StatSubjectDto> getSubjectStats(
             @Param("memberId") Long memberId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
