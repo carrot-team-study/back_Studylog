@@ -21,33 +21,40 @@ public class StatService {
     private final StatMapper statMapper;
 
     /**
-     * 일간 통계 조회 (여러 날)
+     * 일간 통계 조회
      */
     public List<StatDto> getDailyStats(Long memberId, LocalDate startDate, LocalDate endDate) {
-        return statMapper.getStatsList(memberId, startDate, endDate).stream()
+        List<StatDto> stats = statMapper.getStatsList(memberId, startDate, endDate).stream()
                 .map(stat -> StatDto.builder()
                         .periodType("DAILY")
                         .startDate(stat.getStartDate())
                         .totalStudyTime(stat.getTotalStudyTime())
+                        .subjects(statMapper.getSubjectStats(memberId, stat.getStartDate(), stat.getStartDate()))
                         .build())
                 .collect(Collectors.toList());
+
+        // 오늘이 조회 기간 안에 포함되면 실시간 데이터 추가
+        if (!endDate.isBefore(LocalDate.now())) {
+            long todayStudyTime = statMapper.getTodayStudyTime(memberId, LocalDate.now());
+            stats.add(StatDto.builder()
+                    .periodType("DAILY")
+                    .startDate(LocalDate.now())
+                    .totalStudyTime(todayStudyTime)
+                    .subjects(statMapper.getSubjectStats(memberId, LocalDate.now(), LocalDate.now()))
+                    .build());
+        }
+
+        return stats;
     }
 
     /**
-     * 주간 통계 조회 (7일치 DAILY 데이터)
+     * 주간 통계 조회 (총합 + 날짜별 + 과목별)
      */
-    public List<StatDto> getWeeklyStats(Long memberId, LocalDate weekStart) {
-        LocalDate weekEnd = weekStart.plusDays(6);
-        return getDailyStats(memberId, weekStart, weekEnd);
-    }
+    public StatDto getWeekly(Long memberId, LocalDate weekStart) {
+        LocalDate monday = weekStart.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        LocalDate sunday = monday.plusDays(6);
 
-    /**
-     * 주간 합계 (1개의 합산된 데이터)
-     */
-    public StatDto getWeeklySummary(Long memberId, LocalDate weekStart) {
-        LocalDate weekEnd = weekStart.plusDays(6);
-
-        List<StatDto> dailyStats = statMapper.getStatsList(memberId, weekStart, weekEnd);
+        List<StatDto> dailyStats = getDailyStats(memberId, monday, sunday);
 
         long weeklyTotal = dailyStats.stream()
                 .mapToLong(StatDto::getTotalStudyTime)
@@ -55,38 +62,21 @@ public class StatService {
 
         return StatDto.builder()
                 .periodType("WEEKLY")
-                .startDate(weekStart)
+                .startDate(monday)
                 .totalStudyTime(weeklyTotal)
+                .subjects(statMapper.getSubjectStats(memberId, monday, sunday))
+                .dailyStats(dailyStats)
                 .build();
     }
 
     /**
-     * 월간 통계 조회 (해당 월의 DAILY 데이터)
+     * 월간 통계 조회 (총합 + 날짜별 + 과목별)
      */
-    public List<StatDto> getMonthlyStats(Long memberId, YearMonth month) {
+    public StatDto getMonthly(Long memberId, YearMonth month) {
         LocalDate startDate = month.atDay(1);
-        LocalDate endDate = month.atEndOfMonth();
+        LocalDate endDate = month.atEndOfMonth();  // ← minusDays(1) 제거
 
-        // 이번 달이면 어제까지만 (오늘은 집계 전)
-        if (month.equals(YearMonth.now())) {
-            endDate = LocalDate.now().minusDays(1);
-        }
-
-        return getDailyStats(memberId, startDate, endDate);
-    }
-
-    /**
-     * 월간 합계 (1개의 합산된 데이터)
-     */
-    public StatDto getMonthlySummary(Long memberId, YearMonth month) {
-        LocalDate startDate = month.atDay(1);
-        LocalDate endDate = month.atEndOfMonth();
-
-        if (month.equals(YearMonth.now())) {
-            endDate = LocalDate.now().minusDays(1);
-        }
-
-        List<StatDto> dailyStats = statMapper.getStatsList(memberId, startDate, endDate);
+        List<StatDto> dailyStats = getDailyStats(memberId, startDate, endDate);
 
         long monthlyTotal = dailyStats.stream()
                 .mapToLong(StatDto::getTotalStudyTime)
@@ -96,14 +86,9 @@ public class StatService {
                 .periodType("MONTHLY")
                 .startDate(startDate)
                 .totalStudyTime(monthlyTotal)
+                .subjects(statMapper.getSubjectStats(memberId, startDate, endDate))
+                .dailyStats(dailyStats)
                 .build();
-    }
-
-    /**
-     * 과목별 통계 조회 (기간별)
-     */
-    public List<StatDto> getSubjectStats(Long memberId, LocalDate startDate, LocalDate endDate) {
-        return statMapper.getSubjectStats(memberId, startDate, endDate);
     }
 
     /**
