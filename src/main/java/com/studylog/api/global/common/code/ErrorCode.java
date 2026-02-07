@@ -114,6 +114,7 @@ public enum ErrorCode {
     GROUP_NOT_JOIN(HttpStatus.CONFLICT,"GROUP_018","가입 정보가 없습니다."),
     ALREADY_NOT_ACTIVE(HttpStatus.CONFLICT, "GROUP_019", "이미 탈퇴한 회원입니다."),
     GROUP_MAX_USER_INVALID(HttpStatus.BAD_REQUEST, "CGROUP_019", "최대 인원은 최소 1명 이상"),
+    MEMBER_NOT_IN_GROUP(HttpStatus.BAD_REQUEST, "GROUP_020", "그룹의 멤버가 아닙니다. "),
 
     //Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_001", "사용자를 찾을 수 없습니다."),
