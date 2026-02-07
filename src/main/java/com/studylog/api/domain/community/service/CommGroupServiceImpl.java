@@ -1,9 +1,6 @@
 package com.studylog.api.domain.community.service;
 
-import com.studylog.api.domain.community.dto.CommGroupCreateRequest;
-import com.studylog.api.domain.community.dto.CommGroupDetailResponse;
-import com.studylog.api.domain.community.dto.CommGroupSort;
-import com.studylog.api.domain.community.dto.GroupListDto;
+import com.studylog.api.domain.community.dto.*;
 import com.studylog.api.domain.community.entity.CommGroup;
 import com.studylog.api.domain.community.entity.CommGroupMember;
 import com.studylog.api.domain.community.entity.CommGroupTag;
@@ -11,6 +8,8 @@ import com.studylog.api.domain.community.entity.MemberStatus;
 import com.studylog.api.domain.community.repository.*;
 import com.studylog.api.domain.member.entity.Member;
 import com.studylog.api.domain.member.repository.MemberRepository;
+import com.studylog.api.domain.todo.dto.response.TodoResponse;
+import com.studylog.api.domain.todo.repository.TodoRepository;
 import com.studylog.api.global.common.code.ErrorCode;
 import com.studylog.api.global.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +38,7 @@ public class CommGroupServiceImpl implements CommGroupService {
     private final CommTagRepository commTagRepository;
     private final MemberRepository memberRepository;
     private final CommGroupMemberRepository commGroupMemberRepository;
+    private final TodoRepository todoRepository;
 
     //그룸 생성
     @Override
@@ -65,16 +65,23 @@ public class CommGroupServiceImpl implements CommGroupService {
         Member owner = memberRepository.findById(ownerMemberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (req.getMaxUser() != null && req.getMaxUser() < 1) {
+        Long maxUser = req.getMaxUser();
+
+        if (maxUser == null) {
             throw new BusinessException(ErrorCode.GROUP_MAX_USER_INVALID);
         }
+        if (maxUser > 50 || maxUser < 1) {
+            throw new BusinessException(ErrorCode.GROUP_MAX_USER_INVALID);
+        }
+
+
 
         CommGroup group = CommGroup.builder()
                 .ownerMemberId(ownerMemberId)
                 .groupName(req.getGroupName())
                 .groupIntro(req.getGroupIntro())
                 .passwordHash(passwordHash)
-                .maxUser(req.getMaxUser())
+                .maxUser(maxUser)
                 .dailyGoal(req.getDailyGoal())
                 .deletedAt(null)
                 .memberCount(0)
@@ -240,5 +247,37 @@ public class CommGroupServiceImpl implements CommGroupService {
         groupMember.leave();
         commGroup.decreaseMemberCount();
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MemberListDto> getGroupMembers(Long groupId) {
+
+        commGroupRepository.findById(groupId)
+                .orElseThrow(()->new BusinessException(ErrorCode.GROUP_NOT_FOUND));
+
+        return commGroupMemberRepository.findMembersByGroupId(groupId,MemberStatus.ACTIVE);
+    }
+
+    @Override
+    public List<TodoResponse> getMemberTodo(Long groupId, Long viewerId, Long targetMemberId, LocalDate date) {
+
+        // viewer가 그룹원인지
+        if (!commGroupMemberRepository.existsByGroup_GroupIdAndMember_MemberIdAndMemberStatus(
+                groupId, viewerId, MemberStatus.ACTIVE)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        // target이 그룹원인지
+        if (!commGroupMemberRepository.existsByGroup_GroupIdAndMember_MemberIdAndMemberStatus(
+                groupId, targetMemberId, MemberStatus.ACTIVE)) {
+            throw new BusinessException(ErrorCode.MEMBER_NOT_IN_GROUP);
+        }
+        LocalDate today = LocalDate.now();
+
+        return todoRepository.findAllByMemberIdAndTargetDate(targetMemberId, date)
+                .stream()
+                .map(TodoResponse::from)
+                .toList();
     }
 }
