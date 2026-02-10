@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/timer")
+@RequestMapping("/api/timer")
 public class TimerController {
     // 의존 생성자 주입
     private final TimerService timerService;

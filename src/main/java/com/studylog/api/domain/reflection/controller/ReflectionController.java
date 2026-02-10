@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reflections")
+@RequestMapping("/api/reflections")
 public class ReflectionController {
 
     private final ReflectionService reflectionService;
