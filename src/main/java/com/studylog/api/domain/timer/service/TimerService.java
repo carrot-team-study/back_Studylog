@@ -2,6 +2,7 @@ package com.studylog.api.domain.timer.service;
 
 import com.studylog.api.domain.timer.dto.request.ManualTimerRequest;
 import com.studylog.api.domain.timer.dto.response.StudyLogSummaryResponse;
+import com.studylog.api.domain.timer.dto.response.TimerRecordResponse;
 import com.studylog.api.domain.timer.dto.response.TimerStatusResponse;
 import com.studylog.api.domain.timer.dto.response.TimerStopResponse;
 import com.studylog.api.domain.timer.entity.Timer;
@@ -209,8 +210,20 @@ public class TimerService {
 
     // 해당 사용자의 해당 날짜에 대한 타이머 내역 조회
     @Transactional(readOnly = true)
-    public List<Timer> getRecords(Long memberId, LocalDate date) {
-        return timerRepository.findAllByMemberIdAndTimerDate(memberId, date);
+    public List<TimerRecordResponse> getRecords(Long memberId, LocalDate date) {
+        // 해당 사용자의 특정 날짜에 대한 타이머 기록 목록을 조회
+        List<Timer> timers = timerRepository.findAllByMemberIdAndTimerDate(memberId, date);
+
+        return timers.stream()
+                .map(timer -> TimerRecordResponse.builder()
+                        .timerId(timer.getTimerId())
+                        .subjectId(timer.getSubjectId())
+                        .duration(timer.getDuration())
+                        .startTime(timer.getStartTime())
+                        .endTime(timer.getEndTime())
+                        .timerDate(timer.getTimerDate())
+                        .build())
+                .toList();
     }
 
     // 수동 학습 기록
