@@ -26,14 +26,14 @@ public class StatBatchJob {
     private final MemberRepository memberRepository;
 
     /**
-     * 매일 새벽 4시 실행: 어제(새벽 4시 ~ 오늘 새벽 4시) 학습 시간 집계
+     * 매일 새벽 4시 실행: 어제(새벽 5시 ~ 오늘 새벽 5시) 학습 시간 집계
      */
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 5 * * *")
     @Transactional
     public void calculateDailyStats() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        log.info("=== 일일 통계 집계 시작: {} (기준: 4시~4시) ===", yesterday);
+        log.info("=== 일일 통계 집계 시작: {} (기준: 5시~5시) ===", yesterday);
 
         List<Member> members = memberRepository.findAll();
         int successCount = 0;
