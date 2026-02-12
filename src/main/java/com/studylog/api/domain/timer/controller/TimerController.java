@@ -2,6 +2,7 @@ package com.studylog.api.domain.timer.controller;
 
 import com.studylog.api.domain.timer.dto.request.ManualTimerRequest;
 import com.studylog.api.domain.timer.dto.response.StudyLogSummaryResponse;
+import com.studylog.api.domain.timer.dto.response.TimerRecordResponse;
 import com.studylog.api.domain.timer.dto.response.TimerStatusResponse;
 import com.studylog.api.domain.timer.dto.response.TimerStopResponse;
 import com.studylog.api.domain.timer.entity.Timer;
@@ -73,10 +74,10 @@ public class TimerController {
 
     // 해당 날짜에 대한 타이머 내역 조회
     @GetMapping("/records")
-    public ResponseEntity<SuccessResponse<List<Timer>>> getRecords(@RequestHeader("Authorization") String authorization, @RequestParam String date) {
+    public ResponseEntity<SuccessResponse<List<TimerRecordResponse>>> getRecords(@RequestHeader("Authorization") String authorization, @RequestParam String date) {
         Long memberId = currentMemberProvider.getMemberId(authorization);
         LocalDate timerDate = LocalDate.parse(date);
-        List<Timer> records = timerService.getRecords(memberId, timerDate);
+        List<TimerRecordResponse> records = timerService.getRecords(memberId, timerDate);
         SuccessCode sc = SuccessCode.STUDY_LOG_LIST_SUCCESS;
         return ResponseEntity.status(sc.getHttpStatus()).body(SuccessResponse.success(sc, records));
     }
