@@ -92,9 +92,23 @@ public class StatService {
     }
 
     /**
-     * 오늘 학습 시간 (실시간)
+     * 오늘 총 학습 시간 (실시간)
      */
     public Long getTodayStudyTime(Long memberId) {
         return statMapper.getTodayStudyTime(memberId, LocalDate.now());
+    }
+
+    /**
+     * 오늘 총 학습 시간 + 과목별 학습 시간
+     */
+    public StatDto getTodayStats(Long memberId) {
+        LocalDate today = LocalDate.now();
+
+        return StatDto.builder()
+                .periodType("DAILY")
+                .startDate(today)
+                .totalStudyTime(statMapper.getTodayStudyTime(memberId, today))
+                .subjects(statMapper.getSubjectStats(memberId, today, today))
+                .build();
     }
 }

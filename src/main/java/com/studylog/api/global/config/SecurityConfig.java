@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5500", "http://127.0.0.1:5500"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:5173", "http://localhost:5500", "http://127.0.0.1:5500")); // 5173 추가
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -51,6 +51,10 @@ public class SecurityConfig {
         http
                 // CSRF 비활성화 (JWT 사용 시 불필요)
                 .csrf(crsf->crsf.disable())
+
+                // 추가 - CORS 설정을 Spring Security에 명시적으로 적용
+                // CorsConfigurationSource에서 정의한 CORS 규칙을 Security Filter Chain에 연결
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // 세션 사용 안 함 (JWT 사용)
                 .sessionManagement(session->
