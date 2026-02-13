@@ -52,6 +52,7 @@ public class SubjectController {
     }
 
     @Operation(summary = "과목 삭제", description = "과목을 삭제합니다. (Soft Delete)")
+    @DeleteMapping("/{subjectId}")
     public ResponseEntity<Void> deleteSubject(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long subjectId) {
