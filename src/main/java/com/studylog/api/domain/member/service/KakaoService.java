@@ -46,7 +46,8 @@ public class KakaoService {
                 .orElseGet(() -> memberRepository.save(Member.fromKakao(user)));
 
         // JWT 발급 기준: email이 없으면 socialId로 토큰 subject를 잡아야 함
-        String subject = (email != null && !email.isBlank()) ? email : "KAKAO:" + socialId;
+        //String subject = (email != null && !email.isBlank()) ? email : "KAKAO:" + socialId;
+        String subject = member.getMemberEmail();
 
         String accessToken = jwtUtil.generateAccessToken(subject);
         String refreshToken = jwtUtil.generateRefreshToken(subject);
