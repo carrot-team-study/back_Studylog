@@ -115,6 +115,8 @@ public enum ErrorCode {
     ALREADY_NOT_ACTIVE(HttpStatus.CONFLICT, "GROUP_019", "이미 탈퇴한 회원입니다."),
     GROUP_MAX_USER_INVALID(HttpStatus.BAD_REQUEST, "CGROUP_019", "최대 인원은 최소 1명 이상"),
     MEMBER_NOT_IN_GROUP(HttpStatus.BAD_REQUEST, "GROUP_020", "그룹의 멤버가 아닙니다. "),
+    GROUP_NOT_OWNER(HttpStatus.FORBIDDEN, "GROUP_0XX", "그룹장만 삭제할 수 있습니다."),
+    GROUP_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "GROUP_0XY", "이미 삭제된 그룹입니다."),
 
     //Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_001", "사용자를 찾을 수 없습니다."),

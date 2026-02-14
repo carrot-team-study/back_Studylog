@@ -20,4 +20,8 @@ public interface CommGroupRepository extends JpaRepository<CommGroup,Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select g from CommGroup g where g.groupId = :groupId")
     Optional<CommGroup> findByIdForUpdate(@Param("groupId") Long groupId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select g from CommGroup g where g.groupId = :groupId and g.deletedAt is null")
+    Optional<CommGroup> findActiveByIdForUpdate(@Param("groupId") Long groupId);
 }

@@ -2,8 +2,11 @@ package com.studylog.api.domain.community.repository;
 
 import com.studylog.api.domain.community.dto.GroupListDto;
 import com.studylog.api.domain.community.dto.MemberListDto;
+import com.studylog.api.domain.community.dto.MyGroupListDto;
 import com.studylog.api.domain.community.entity.CommGroupMember;
 import com.studylog.api.domain.community.entity.MemberStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +18,24 @@ import java.util.Optional;
 public interface CommGroupMemberRepository extends JpaRepository<CommGroupMember, Long> {
     Optional<CommGroupMember> findByGroup_GroupIdAndMember_MemberId(Long groupGroupId, Long memberMemberId);
     boolean existsByGroup_GroupIdAndMember_MemberIdAndMemberStatus(Long groupId, Long memberId, MemberStatus memberStatus);
+
+
+
+    @Query("""
+    select new com.studylog.api.domain.community.dto.MyGroupListDto(
+    g.groupId, g.groupName, g.groupIntro, g.memberCount, g.maxUser, g.createdAt, gm.role
+      )
+      from CommGroupMember gm
+      join gm.group g
+      where gm.member.memberId = :memberId
+        and gm.memberStatus = :status
+        and g.deletedAt is null
+      order by g.createdAt desc
+    """)
+    Page<MyGroupListDto> findMyActiveGroups(@Param("memberId") Long memberId,
+                                            @Param("status") MemberStatus status,
+                                            Pageable pageable);
+
 
     @Query("""
     select new com.studylog.api.domain.community.dto.MemberListDto(
@@ -112,7 +133,6 @@ public interface CommGroupMemberRepository extends JpaRepository<CommGroupMember
     List<RankRowView> findTodayDoneTodoRanking(@Param("groupId") Long groupId,
                                                @Param("date") LocalDate date,
                                                @Param("limit") int limit);
-
 
 }
 

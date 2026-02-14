@@ -130,10 +130,11 @@ public class CommGroupController {
     public ResponseEntity<SuccessResponse<List<TodoResponse>>> getMemberTodosToday(
             @PathVariable Long groupId,
             @PathVariable("memberId") Long targetMemberId,
-            @RequestHeader("memberId") Long viewerId,
+            @RequestHeader("Authorization") String authorization,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
+        Long viewerId = currentMemberProvider.getMemberId(authorization);
         LocalDate targetDate = (date == null) ? LocalDate.now() : date;
 
         List<TodoResponse> data = commGroupService.getMemberTodo(groupId, viewerId, targetMemberId, targetDate);
@@ -191,6 +192,32 @@ public class CommGroupController {
         List<RankRowDto> data = commRankingService.getTodayTodoDoneRanking(groupId, viewerId, date, limit);
 
         return ResponseEntity.ok(SuccessResponse.success(SuccessCode.GROUP_RANKING_SUCCESS, data));
+    }
+
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<SuccessResponse<Long>> deleteGroup(
+            @PathVariable Long groupId,
+            @RequestHeader("Authorization") String authorization
+    ) {
+        Long requesterId = currentMemberProvider.getMemberId(authorization);
+        commGroupService.deleteGroup(groupId, requesterId);
+
+        return ResponseEntity.ok(
+                SuccessResponse.success(SuccessCode.GROUP_DELETE_SUCCESS, groupId)
+        );
+    }
+
+    @GetMapping("/me/groups")
+    public ResponseEntity<SuccessResponse<Page<MyGroupListDto>>> myGroups(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Long memberId = currentMemberProvider.getMemberId(authorization);
+        Pageable pageable = PageRequest.of(page, Math.min(size, 50));
+
+        Page<MyGroupListDto> data = commGroupService.getMyGroups(memberId, pageable);
+        return ResponseEntity.ok(SuccessResponse.success(SuccessCode.GROUP_MY_LIST_SUCCESS, data));
     }
 
 

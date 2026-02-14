@@ -72,5 +72,8 @@ public class CommGroup {
         if (this.memberCount > 0) this.memberCount--;
     }
 
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
 
 }

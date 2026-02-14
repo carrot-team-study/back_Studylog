@@ -81,6 +81,8 @@ public enum SuccessCode {
     GROUP_DETAIL_SUCCESS(HttpStatus.OK, "GROUP_200_5", "그룹 상세 조회 성공"),
     GROUP_LIST_SUCCESS(HttpStatus.OK, "GROUP_200_6", "그룹 리스트 조회 성공"),
     GROUP_LEAVE_SUCCESS(HttpStatus.OK, "GROUP_200_7", "그룹 탈퇴 성공"),
+    GROUP_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "GROUP_200_7", "그룹 삭제 성공"),
+    GROUP_MY_LIST_SUCCESS(HttpStatus.OK, "GROUP_200_8", "가입한 그룹 목록 조회 성공"),
 
     // RANK / LIKE
     GROUP_RANKING_SUCCESS(HttpStatus.OK, "RANK_200", "그룹 랭킹 조회 성공"),
