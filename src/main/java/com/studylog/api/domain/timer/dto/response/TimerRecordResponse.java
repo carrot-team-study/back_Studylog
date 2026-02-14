@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 public class TimerRecordResponse {
     private Long timerId;
     private Long subjectId;
-    private BigDecimal duration;
+    private String subjectName;
+    private Long duration;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LocalDate timerDate;

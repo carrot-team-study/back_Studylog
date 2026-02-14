@@ -25,7 +25,7 @@ public class TodoService {
     // 전체 TodoList 조회
     @Transactional(readOnly = true)
     public List<TodoResponse> getAll(Long memberId) {
-        return todoRepository.findAllByMemberId(memberId)
+        return todoRepository.findAllWithSubjectByMemberId(memberId)
                 .stream()
                 .map(TodoResponse::from)
                 .toList();
@@ -34,7 +34,7 @@ public class TodoService {
     // 해당 날짜에 대한 TodoList 조회
     @Transactional(readOnly = true)
     public List<TodoResponse> getByDate(Long memberId, LocalDate targetDate) {
-        return todoRepository.findAllByMemberIdAndTargetDate(memberId, targetDate)
+        return todoRepository.findAllWithSubjectByMemberIdAndDate(memberId, targetDate)
                 .stream()
                 .map(TodoResponse::from)
                 .toList();
