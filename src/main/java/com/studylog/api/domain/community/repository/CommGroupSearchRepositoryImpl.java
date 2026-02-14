@@ -48,6 +48,9 @@ public class CommGroupSearchRepositoryImpl implements CommGroupSearchRepository{
         //WHERE 조건을 상황에 따라 붙이기 위한 빌더
         BooleanBuilder where = new BooleanBuilder();
 
+        // 삭제된 그룹 제외 (항상 기본 조건)
+        where.and(g.deletedAt.isNull());
+
         //그룹명 검색
         if (keyword != null && !keyword.isBlank()) {
             String kw = keyword.trim();

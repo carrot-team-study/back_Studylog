@@ -17,5 +17,6 @@ public interface CommGroupService {
     void leave(Long groupId, Long memberId);
     List<MemberListDto> getGroupMembers(Long groupId);
     List<TodoResponse> getMemberTodo(Long groupId, Long viewerId, Long targetMemberId, LocalDate date);
-
+    void deleteGroup(Long groupId, Long requesterId);
+    Page<MyGroupListDto> getMyGroups(Long memberId, Pageable pageable);
 }

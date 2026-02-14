@@ -126,7 +126,7 @@ public class CommGroupServiceImpl implements CommGroupService {
     @Override
     public CommGroupDetailResponse getDetail(Long groupId) {
 
-        CommGroup group = commGroupRepository.findById(groupId)
+        CommGroup group = commGroupRepository.findByGroupIdAndDeletedAtIsNull(groupId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_NOT_FOUND));
 
         //groupId로 연결테이블에서 태그 연결 기록 조회
@@ -253,10 +253,10 @@ public class CommGroupServiceImpl implements CommGroupService {
     @Override
     public List<MemberListDto> getGroupMembers(Long groupId) {
 
-        commGroupRepository.findById(groupId)
-                .orElseThrow(()->new BusinessException(ErrorCode.GROUP_NOT_FOUND));
+        commGroupRepository.findByGroupIdAndDeletedAtIsNull(groupId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_NOT_FOUND));
 
-        return commGroupMemberRepository.findMembersByGroupId(groupId,MemberStatus.ACTIVE);
+        return commGroupMemberRepository.findMembersByGroupId(groupId, MemberStatus.ACTIVE);
     }
 
     @Override
@@ -279,5 +279,35 @@ public class CommGroupServiceImpl implements CommGroupService {
                 .stream()
                 .map(TodoResponse::from)
                 .toList();
+    }
+
+    //그룹 삭제
+    @Override
+    @Transactional
+    public void deleteGroup(Long groupId, Long requesterId) {
+
+        CommGroup group = commGroupRepository.findByGroupIdAndDeletedAtIsNull(groupId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 이미 삭제 처리된 것 방지(혹시 findByIdForUpdate 쓰는 경우 대비)
+//        if (group.getDeletedAt() != null) {
+//            throw new BusinessException(ErrorCode.GROUP_ALREADY_DELETED);
+//        }
+
+        // 그룹장만 삭제 가능
+        if (!group.getOwnerMemberId().equals(requesterId)) {
+            throw new BusinessException(ErrorCode.GROUP_NOT_OWNER); // 또는 FORBIDDEN
+        }
+
+        // 소프트 삭제
+        group.softDelete(); // 아래 엔티티 메서드 추가
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MyGroupListDto> getMyGroups(Long memberId, Pageable pageable) {
+        int size = Math.min(pageable.getPageSize(), 50);
+        Pageable safe = PageRequest.of(pageable.getPageNumber(), size);
+        return commGroupMemberRepository.findMyActiveGroups(memberId, MemberStatus.ACTIVE, safe);
     }
 }
