@@ -1,5 +1,6 @@
 package com.studylog.api.domain.todo.entity;
 
+import com.studylog.api.domain.subject.entity.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class Todo {
     private Long todoId;
 
     // 과목 번호
-    @Column(nullable = false)
+    @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
     // 회원 번호
@@ -39,6 +40,10 @@ public class Todo {
     private LocalDateTime createdAt;
     // 수정일
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", insertable = false, updatable = false)
+    private Subject subject;
 
     @Builder
     public Todo(Long subjectId, Long memberId, String content, LocalDate targetDate) {

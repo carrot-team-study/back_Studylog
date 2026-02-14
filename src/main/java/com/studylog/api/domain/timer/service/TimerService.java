@@ -159,7 +159,7 @@ public class TimerService {
                 memberId,
                 startTime,
                 endTime,
-                BigDecimal.valueOf(durationSeconds),
+                durationSeconds,
                 startTime.toLocalDate()
         );
         timerRepository.save(timer);
@@ -211,13 +211,14 @@ public class TimerService {
     // 해당 사용자의 해당 날짜에 대한 타이머 내역 조회
     @Transactional(readOnly = true)
     public List<TimerRecordResponse> getRecords(Long memberId, LocalDate date) {
-        // 해당 사용자의 특정 날짜에 대한 타이머 기록 목록을 조회
-        List<Timer> timers = timerRepository.findAllByMemberIdAndTimerDate(memberId, date);
+        // 해당 사용자의 특정 날짜에 대한 각 과목의 타이머 기록 목록을 조회
+        List<Timer> timers = timerRepository.findAllWithSubject(memberId, date);
 
         return timers.stream()
                 .map(timer -> TimerRecordResponse.builder()
                         .timerId(timer.getTimerId())
                         .subjectId(timer.getSubjectId())
+                        .subjectName(timer.getSubject().getSubjectName())
                         .duration(timer.getDuration())
                         .startTime(timer.getStartTime())
                         .endTime(timer.getEndTime())
@@ -234,7 +235,7 @@ public class TimerService {
                 request.getMemberId(),
                 now.minusSeconds(request.getDuration()), // 시작 시간 = 현재 - duration
                 now,
-                BigDecimal.valueOf(request.getDuration()),
+                request.getDuration(),
                 now.toLocalDate()
         );
         timerRepository.save(timer);
@@ -247,11 +248,8 @@ public class TimerService {
     // 하루 총 학습 시간 요약
     @Transactional(readOnly = true)
     public StudyLogSummaryResponse getDailySummary(Long memberId, LocalDate date) {
-        List<Timer> timers = timerRepository.findAllByMemberIdAndTimerDate(memberId, date);
-        long totalSeconds = timers.stream()
-                .map(Timer::getDuration)
-                .mapToLong(BigDecimal::longValue)
-                .sum();
+
+        Long totalSeconds = timerRepository.sumDurationByMemberIdAndDate(memberId, date);
 
         return StudyLogSummaryResponse.builder()
                 .totalDuration(totalSeconds)

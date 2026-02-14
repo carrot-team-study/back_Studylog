@@ -275,7 +275,7 @@ public class CommGroupServiceImpl implements CommGroupService {
         }
         LocalDate today = LocalDate.now();
 
-        return todoRepository.findAllByMemberIdAndTargetDate(targetMemberId, date)
+        return todoRepository.findAllWithSubjectByMemberIdAndDate(targetMemberId, date)
                 .stream()
                 .map(TodoResponse::from)
                 .toList();

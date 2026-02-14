@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class TodoResponse {
     private Long todoId;
     private Long subjectId;
+    private String subjectName;
     private String content;
     private LocalDate targetDate;
     private boolean completed;
@@ -25,6 +26,7 @@ public class TodoResponse {
         return new TodoResponse(
                 todo.getTodoId(),
                 todo.getSubjectId(),
+                todo.getSubject().getSubjectName(),
                 todo.getContent(),
                 todo.getTargetDate(),
                 todo.isCompleted(),
