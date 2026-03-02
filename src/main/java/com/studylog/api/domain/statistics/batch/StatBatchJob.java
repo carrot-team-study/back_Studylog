@@ -6,6 +6,7 @@ import com.studylog.api.domain.statistics.entity.Stat;
 import com.studylog.api.domain.statistics.repository.StatRepository;
 import com.studylog.api.domain.timer.entity.Timer;
 import com.studylog.api.domain.timer.repository.TimerRepository;
+import com.studylog.api.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,6 +25,7 @@ public class StatBatchJob {
     private final TimerRepository timerRepository;
     private final StatRepository statRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     /**
      * 매일 새벽 4시 실행: 어제(새벽 5시 ~ 오늘 새벽 5시) 학습 시간 집계
@@ -68,6 +70,20 @@ public class StatBatchJob {
 
                 statRepository.save(stat);
                 successCount++;
+
+                // 통계 알림 전송 (학습 기록이 있는 경우만)
+                if (totalSeconds > 0 && member.getMemberEmail() != null) {
+                    try {
+                        notificationService.createAndSendNotification(
+                                member.getMemberEmail(),
+                                "STAT",
+                                "일일 학습 통계",
+                                "어제 총 " + formatTime(totalSeconds) + " 학습했습니다"
+                        );
+                    } catch (Exception e) {
+                        log.warn("통계 알림 전송 실패: memberId={}", member.getMemberId());
+                    }
+                }
 
                 log.debug("저장 완료: memberId={}, {}초 ({})",
                         member.getMemberId(), totalSeconds, formatTime(totalSeconds));

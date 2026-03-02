@@ -10,10 +10,12 @@ import com.studylog.api.domain.member.entity.Member;
 import com.studylog.api.domain.member.repository.MemberRepository;
 import com.studylog.api.domain.todo.dto.response.TodoResponse;
 import com.studylog.api.domain.todo.repository.TodoRepository;
+import com.studylog.api.domain.notification.service.NotificationService;
 import com.studylog.api.global.common.code.ErrorCode;
 import com.studylog.api.global.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ import static com.studylog.api.domain.community.entity.QCommGroup.commGroup;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommGroupServiceImpl implements CommGroupService {
 
     private final CommGroupRepository commGroupRepository;
@@ -39,6 +42,7 @@ public class CommGroupServiceImpl implements CommGroupService {
     private final MemberRepository memberRepository;
     private final CommGroupMemberRepository commGroupMemberRepository;
     private final TodoRepository todoRepository;
+    private final NotificationService notificationService;
 
     //그룸 생성
     @Override
@@ -212,6 +216,23 @@ public class CommGroupServiceImpl implements CommGroupService {
 
             //member_count 증가
             commGroup.increaseMemberCount();
+
+            // 그룹장에게 새 멤버 가입 알림
+            try {
+                Member owner = memberRepository.findById(commGroup.getOwnerMemberId())
+                        .orElse(null);
+                if (owner != null && owner.getMemberEmail() != null) {
+                    notificationService.createAndSendNotification(
+                            owner.getMemberEmail(),
+                            "GROUP_JOIN",
+                            "새 멤버 가입",
+                            member.getMemberNickname() + "님이 " + commGroup.getGroupName() + "에 가입했습니다"
+                    );
+                }
+            } catch (Exception e) {
+                log.warn("그룹 가입 알림 전송 실패: {}", e.getMessage());
+            }
+
             return;
         }
 

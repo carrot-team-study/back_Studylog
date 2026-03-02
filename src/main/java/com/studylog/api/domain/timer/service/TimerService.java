@@ -7,9 +7,13 @@ import com.studylog.api.domain.timer.dto.response.TimerStatusResponse;
 import com.studylog.api.domain.timer.dto.response.TimerStopResponse;
 import com.studylog.api.domain.timer.entity.Timer;
 import com.studylog.api.domain.timer.repository.TimerRepository;
+import com.studylog.api.domain.member.entity.Member;
+import com.studylog.api.domain.member.repository.MemberRepository;
+import com.studylog.api.domain.notification.service.NotificationService;
 import com.studylog.api.global.common.code.ErrorCode;
 import com.studylog.api.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +25,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TimerService {
     private final StringRedisTemplate redisTemplate;
     private final TimerRepository timerRepository;
+    private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
+
+    private static final long LONG_STUDY_THRESHOLD = 7200; // 2시간(초)
 
     // Key
     private static final String TIMER_KEY_PREFIX = "timer:";
@@ -163,6 +172,25 @@ public class TimerService {
                 startTime.toLocalDate()
         );
         timerRepository.save(timer);
+
+        // 장시간 학습 알림 (2시간 이상)
+        if (durationSeconds >= LONG_STUDY_THRESHOLD) {
+            try {
+                Member member = memberRepository.findById(memberId).orElse(null);
+                if (member != null && member.getMemberEmail() != null) {
+                    long hours = durationSeconds / 3600;
+                    long minutes = (durationSeconds % 3600) / 60;
+                    notificationService.createAndSendNotification(
+                            member.getMemberEmail(),
+                            "LONG_STUDY",
+                            "장시간 학습 알림",
+                            hours + "시간 " + minutes + "분 동안 학습했습니다! 휴식을 취해보세요"
+                    );
+                }
+            } catch (Exception e) {
+                log.warn("장시간 학습 알림 전송 실패: {}", e.getMessage());
+            }
+        }
 
         return TimerStopResponse.builder()
                 .duration(durationSeconds)
