@@ -74,12 +74,19 @@ public class TimerController {
 
     // 해당 날짜에 대한 타이머 내역 조회
     @GetMapping("/records")
-    public ResponseEntity<SuccessResponse<List<TimerRecordResponse>>> getRecords(@RequestHeader("Authorization") String authorization, @RequestParam String date) {
+    public ResponseEntity<SuccessResponse<List<TimerRecordResponse>>> getRecords(@RequestHeader("Authorization") String authorization, @RequestParam String date, @RequestParam(required = false) Long subjectId) {
         Long memberId = currentMemberProvider.getMemberId(authorization);
         LocalDate timerDate = LocalDate.parse(date);
-        List<TimerRecordResponse> records = timerService.getRecords(memberId, timerDate);
+        List<TimerRecordResponse> records;
+        if (subjectId != null) {
+            records = timerService.getRecordsBySubject(memberId, timerDate, subjectId);
+        } else {
+            records = timerService.getRecords(memberId, timerDate);
+        }
         SuccessCode sc = SuccessCode.STUDY_LOG_LIST_SUCCESS;
-        return ResponseEntity.status(sc.getHttpStatus()).body(SuccessResponse.success(sc, records));
+        return ResponseEntity
+                .status(sc.getHttpStatus())
+                .body(SuccessResponse.success(sc, records));
     }
 
     // 수동 학습 기록

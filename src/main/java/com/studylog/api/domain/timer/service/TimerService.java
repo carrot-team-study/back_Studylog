@@ -255,6 +255,23 @@ public class TimerService {
                 .toList();
     }
 
+    // 특정 회원의 특정 날짜에 대한 해당 과목의 타이머 기록 조회
+    @Transactional(readOnly = true)
+    public List<TimerRecordResponse> getRecordsBySubject(Long memberId, LocalDate date, Long subjectId) {
+        List<Timer> timers = timerRepository.findAllByMemberIdAndTimerDateAndSubjectId(memberId, date, subjectId);
+        return timers.stream()
+                .map(timer -> TimerRecordResponse.builder()
+                        .timerId(timer.getTimerId())
+                        .subjectId(timer.getSubjectId())
+                        .subjectName(timer.getSubject().getSubjectName())
+                        .duration(timer.getDuration())
+                        .startTime(timer.getStartTime())
+                        .endTime(timer.getEndTime())
+                        .timerDate(timer.getTimerDate())
+                        .build())
+                .toList();
+    }
+
     // 수동 학습 기록
     public TimerStopResponse addManualRecord(ManualTimerRequest request) {
         LocalDateTime now = LocalDateTime.now();

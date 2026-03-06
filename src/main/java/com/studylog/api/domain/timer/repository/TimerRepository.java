@@ -37,4 +37,7 @@ public interface TimerRepository extends JpaRepository<Timer, Long> {
 
     // 특정 회원의 특정 날짜에 대한 타이머 기록 조회
     List<Timer> findAllByMemberIdAndTimerDate(Long memberId, LocalDate timerDate);
+
+    // 특정 회원의 특정 날짜에 대한 해당 과목의 타이머 기록 조회
+    List<Timer> findAllByMemberIdAndTimerDateAndSubjectId(Long memberId, LocalDate timerDate, Long subjectId);
 }
