@@ -11,5 +11,5 @@ public interface CommTagRepository extends JpaRepository<CommTag, Long> {
 
     Optional<CommTag> findByCode(String code);//코드로 태그 찾기
     boolean existsByCode(String code);//코드 중복체크
-    List<CommTag> findAllByIsActiveTrueOrderBySortOrderAsc();//태그 목록
+    List<CommTag> findAllByIsActiveTrueOrderBySortOrderAscNameAsc();
 }
