@@ -1,10 +1,7 @@
 package com.studylog.api.domain.community.controller;
 
 import com.studylog.api.domain.community.dto.*;
-import com.studylog.api.domain.community.service.CommGroupMemberLikeQueryService;
-import com.studylog.api.domain.community.service.CommGroupService;
-import com.studylog.api.domain.community.service.CommLikeService;
-import com.studylog.api.domain.community.service.CommRankingService;
+import com.studylog.api.domain.community.service.*;
 import com.studylog.api.domain.todo.dto.response.TodoResponse;
 import com.studylog.api.global.auth.CurrentMemberProvider;
 import com.studylog.api.global.common.code.SuccessCode;
@@ -218,6 +215,14 @@ public class CommGroupController {
 
         Page<MyGroupListDto> data = commGroupService.getMyGroups(memberId, pageable);
         return ResponseEntity.ok(SuccessResponse.success(SuccessCode.GROUP_MY_LIST_SUCCESS, data));
+    }
+
+    private final CommTagService commTagService;
+    // 태그 목록 조회
+    @GetMapping("/tags")
+    public ResponseEntity<SuccessResponse<List<CommTagResponse>>> getTags() {
+        List<CommTagResponse> data = commTagService.getTags();
+        return ResponseEntity.ok(SuccessResponse.success(SuccessCode.OK, data));
     }
 
 
