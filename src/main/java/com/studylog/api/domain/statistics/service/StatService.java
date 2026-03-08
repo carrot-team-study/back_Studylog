@@ -29,7 +29,6 @@ public class StatService {
                         .periodType("DAILY")
                         .startDate(stat.getStartDate())
                         .totalStudyTime(stat.getTotalStudyTime())
-                        .subjects(statMapper.getSubjectStats(memberId, stat.getStartDate(), stat.getStartDate()))
                         .build())
                 .collect(Collectors.toList());
 
@@ -40,11 +39,23 @@ public class StatService {
                     .periodType("DAILY")
                     .startDate(LocalDate.now())
                     .totalStudyTime(todayStudyTime)
-                    .subjects(statMapper.getSubjectStats(memberId, LocalDate.now(), LocalDate.now()))
                     .build());
         }
 
         return stats;
+    }
+
+    /**
+     * 특정 날짜 과목별 통계 조회
+     */
+    public StatDto getDailySubjects(Long memberId, LocalDate date) {
+        long totalStudyTime = statMapper.getTodayStudyTime(memberId, date);
+        return StatDto.builder()
+                .periodType("DAILY")
+                .startDate(date)
+                .totalStudyTime(totalStudyTime)
+                .subjects(statMapper.getSubjectStats(memberId, date, date))
+                .build();
     }
 
     /**

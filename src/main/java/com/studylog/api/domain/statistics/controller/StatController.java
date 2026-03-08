@@ -25,6 +25,15 @@ public class StatController {
     private final StatService statService;
     private final CurrentMemberProvider currentMemberProvider;
 
+    @Operation(summary = "특정 날짜 과목별 통계", description = "날짜 선택 시 과목별 학습시간을 조회합니다.")
+    @GetMapping("/daily")
+    public ResponseEntity<StatDto> getDailySubjects(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Long memberId = currentMemberProvider.getMemberId(authorization);
+        return ResponseEntity.ok(statService.getDailySubjects(memberId, date));
+    }
+
     @Operation(summary = "주간 통계 조회", description = "주간 총합 + 날짜별 + 과목별 통계를 조회합니다.")
     @GetMapping("/weekly")
     public ResponseEntity<StatDto> getWeekly(
